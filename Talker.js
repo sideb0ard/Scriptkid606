@@ -8,8 +8,9 @@ function puts(error, stdout, stderr) { sys.puts(stdout) };
 
 codetraxx.subscribe( function(msg) {
   var blah = msg.txt;
+  var voice = msg.voice;
   console.log("MSG:: " + blah);
-  exec("say --voice Zarvox " + blah, puts);
+  exec("say --voice "+ voice +" " + blah, puts);
 
   }
 
