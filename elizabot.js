@@ -389,3 +389,4 @@ if (typeof Array.prototype.shift == 'undefined') {
 }
 
 // eof
+module.exports.getInitial = getInitial
