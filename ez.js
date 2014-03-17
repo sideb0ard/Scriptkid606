@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var Bot = require('ezeebot');
 var molly = new Bot('molly','low');
 console.log("\n");
