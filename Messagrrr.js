@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var amqp = require('./codetraxx_lib.js');
+var mq = require('./rabbitconfix');
 
 var msg = process.argv[2];
 var voice = process.argv[3];
@@ -15,4 +15,4 @@ if (typeof voice == 'undefined') {
 
 var speech = {"txt": msg, "voice": voice};
 console.log("Sending txt -- " + JSON.stringify(speech));
-amqp.publish('bpm',speech);
+mq.publish('voices',speech);

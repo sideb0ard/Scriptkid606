@@ -2,11 +2,11 @@
 var sys = require('sys')
 var exec = require('child_process').exec;
 
-var codetraxx = require('./codetraxx_lib.js');
+var mq = require('./rabbitconfix');
 
 function puts(error, stdout, stderr) { sys.puts(stdout) };
 
-codetraxx.subscribe( function(msg) {
+mq.subscribe('voices', function(msg) {
   var blah = msg.txt;
   var voice = msg.voice;
   console.log("MSG:: " + blah);

@@ -3,11 +3,11 @@ var amqp = require('amqp');
 var config = {
   //rabbitUrl:'amqp://guest:@172.16.10.74',
   rabbitUrl:'amqp://guest:@10.0.1.20',
-  queueName:'bpm'
+  // queueName:'bpm'
 };
 
-function createConnection() {
-  return amqp.createConnection({url:config.rabbitUrl});
+function createConnection(qname) {
+  return amqp.createConnection(qname);
 }
 
 function safeEndConnection(connection) {
@@ -25,9 +25,9 @@ function safeEndConnection(connection) {
 
 
 function publish(qname, msg, conn) {
-  //console.log("starting..");
+  console.log("starting  mq - " + qname);
   if (conn === undefined) {
-    conn = createConnection();
+    conn = createConnection(qname);
   }
   conn.on('ready', function () {
     // console.log("Sending message..." + JSON.stringify(msg));
@@ -39,15 +39,15 @@ function publish(qname, msg, conn) {
   });
 }
 
-function subscribe(musicalFunction, conn) {
+function subscribe(qname, musicalFunction, conn) {
   console.log("Subbbbing...");
   if (conn === undefined) {
-    conn = createConnection();
+    conn = createConnection(qname);
   }
   conn.on('ready', function() {
-    conn.exchange(config.queueName, {type: 'fanout', autoDelete: true}, function(exch) {
+    conn.exchange(qname, {type: 'fanout', autoDelete: true}, function(exch) {
       conn.queue('tmp-' + Math.random(), {exclusive: true},function(queue){
-        queue.bind('bpm', '');
+        queue.bind(qname, '');
         queue.subscribe(musicalFunction);
       });
     });
