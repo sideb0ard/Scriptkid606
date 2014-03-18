@@ -1,6 +1,7 @@
-#!/usr/bin/env node
-var mq = require('./rabbitconfix');
+#!/Users/thorsten/.nvm/v0.11.11/bin/node
 
+// #!/usr/bin/env node
+var mq = require('./rabbitconfix');
 var msg = process.argv[2];
 var voice = process.argv[3];
 if(typeof msg == 'undefined') {
