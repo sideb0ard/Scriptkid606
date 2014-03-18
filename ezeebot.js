@@ -13,8 +13,10 @@ var Ezeebot = module.exports = function (name, intelligence_level) {
   this.transform = function(input) {
     if ( typeof dict[input] === 'undefined') {
       console.log("Huh?");
+      return "huh?";
     } else {
       console.log(dict[input][Math.floor(Math.random() * dict[input].length)]);
+      return dict[input][Math.floor(Math.random() * dict[input].length)];
     }
   }
   this.getInitial = function() {
