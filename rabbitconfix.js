@@ -54,35 +54,7 @@ function subscribe(qname, musicalFunction, conn) {
   });
 }
 
-function sin (x) {
-  return Math.sin(tau * t * x);
-}
-
-function square (x) {
-  var n = Math.sin(tau * t * x);
-  return n > 0 ? 1 : -1;
-}
-
-function sawtooth (x) {
-  return t % (1 / x) * x * 2 - 1;
-}
-
-function randyNum(num) {
-    return Math.floor((Math.random()*num)+1);
-}
-
-function playrrr (sound_file) {
-  var cmd = "play " + sound_file;
-  console.log(cmd);
-  return exec(cmd);
-}
-
 //  module.exports.init = init;
 module.exports.publish = publish;
 module.exports.subscribe = subscribe;
 module.exports.createConnection = createConnection;
-module.exports.sin = sin;
-module.exports.square = square;
-module.exports.sawtooth = sawtooth;
-module.exports.playrrr = playrrr;
-module.exports.randyNum = randyNum;
