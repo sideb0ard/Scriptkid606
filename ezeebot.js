@@ -9,11 +9,14 @@ var dict = {
   "shite": ["jobby", "bum", "pee pee", "cnut", "boaboe"]
 }
 
+
 var cn = "http://conceptnet5.media.mit.edu/data/5.2/search?text=";
 
 function puts(error, stdout, stderr) { sys.puts(stdout) };
 
 var voices = ["Agnes","Albert","Alex","Bad","Bahh","Bells","Boing","Bruce","Bubbles","Cellos","Deranged","Fred","Good","Hysterical","Junior","Kathy","Pipe","Princess","Ralph","Trinoids","Vicki","Victoria","Whisper","Zarvox"];
+var voice=voices[0];
+var rap = "";
 
 var speaker = function(response) {
   var str = '';
@@ -34,8 +37,10 @@ var speaker = function(response) {
       replyText = replyText.replace(/[[\]]/g,'');
       replyText = replyText.replace(/[()]/g,'');
       //console.log(obj.edges[Math.floor(Math.random() * obj.edges.length)].startLemmas);
-      var voice = voices[Math.floor((Math.random()*voices.length)+1)]
+      //var voice = voices[Math.floor((Math.random()*voices.length)+1)]
+      var voice = voices[1];
       console.log("REPLY:: " + replyText);
+      exec("say --voice " + voice + " " + raap, puts);
       exec("say --voice " + voice + " " + replyText, puts);
     } else {
       console.log("Nae surfaceText");
@@ -49,11 +54,12 @@ var Ezeebot = function (name, intelligence_level) {
   return this;
 };
 
-Ezeebot.prototype.transform = function(input) {
+Ezeebot.prototype.transform = function(rapmsg,randy,voicemsg) {
 
+    rap = rapmsg;
     var options = {
       host: 'conceptnet5.media.mit.edu',
-      path: '/data/5.2/search?text=' + input
+      path: '/data/5.2/search?text=' + randy
     };
 
     http.request(options, speaker).end();
