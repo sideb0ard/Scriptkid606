@@ -38,7 +38,8 @@ function rapperRob() {
   var lyricz = lyrics.toString();
 
   m.seed(lyricz, function() {
-    var response = m.respond(lyrics[0]).toString();
+    //var response = m.respond(lyrics[0]).toString();
+    var response = m.respond(lyrics[mq.randyNum(lyrics.length -1)]).toString();
     //var lyriczwordarray = lyricz.split(" ");
     //var lyriczLength = lyriczwordarray.length;
     var resSplit = response.split(",");
