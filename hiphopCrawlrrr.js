@@ -38,7 +38,7 @@ function rapperRob() {
     console.log("BPM: " + bpm + " MICROTICK: " + microTick + " TICK COUNTER: " + tickCounter + " and BEAT is: " + beat);
     if (/[15]/.test(beat) && microTick == 3 && playing == 0) {
       playing = 1;
-      exec("say -r " + (bpm * 2) + " -v "+ voice +" " + lyriczwordarray[counter] + " " + lyriczwordarray[counter+1] + " " + lyriczwordarray[counter+2], puts);
+      exec("say -r " + (bpm * 4) + " -v "+ voice +" " + lyriczwordarray[counter] + " " + lyriczwordarray[counter+1] + " " + lyriczwordarray[counter+2], puts);
       //console.log("YO! " + lyrics[counter]);
       if (counter >= lyriczLength) {
         counter = 0;

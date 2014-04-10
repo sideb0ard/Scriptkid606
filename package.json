@@ -13,6 +13,7 @@
     "serialport": "*",
     "cheerio": "*",
     "request": "*",
-    "picture-tube": "*"
+    "picture-tube": "*",
+    "markov": "*"
   }
 }
