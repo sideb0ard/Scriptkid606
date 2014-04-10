@@ -11,11 +11,12 @@ var voices = ["Agnes","Albert","Alex","Bad","Bahh","Bells","Boing","Bruce","Bubb
 
 var voice;
 
-var srchTerm = process.argv[2];
-if (typeof srchTerm == 'undefined') {
+if (typeof process.argv[2] == 'undefined') {
   console.log("OI! gimme a search term..");
   process.exit(1);
 }
+var srchTerm = process.argv[2];
+srchTerm = encodeURIComponent(srchTerm);
 
 if (process.argv[3]) {
   voice=voices[process.argv[3]];
@@ -27,18 +28,22 @@ var lyrics = [];
 
 function rapperRob() {
   var counter = 0;
-  var lyricLength = lyrics.length;
+  var lyricz = lyrics.toString();
+  var lyriczwordarray = lyricz.split(" ");
+  var lyriczLength = lyriczwordarray.length;
+  //console.log(lyriczwordarray);
+
   mq.subscribe('bpm', function(msg) {
     var bpm = msg.bpm, microTick = msg.microTick, tickCounter = msg.tickCounter, beat = msg.beat;
     console.log("BPM: " + bpm + " MICROTICK: " + microTick + " TICK COUNTER: " + tickCounter + " and BEAT is: " + beat);
-    if (/[1]/.test(beat) && microTick == 3 && playing == 0) {
+    if (/[15]/.test(beat) && microTick == 3 && playing == 0) {
       playing = 1;
-      exec("say --voice "+ voice +" " + lyrics[counter], puts);
-      console.log("YO! " + lyrics[counter]);
-      if (counter >= lyricLength) {
+      exec("say -r " + (bpm * 2) + " -v "+ voice +" " + lyriczwordarray[counter] + " " + lyriczwordarray[counter+1] + " " + lyriczwordarray[counter+2], puts);
+      //console.log("YO! " + lyrics[counter]);
+      if (counter >= lyriczLength) {
         counter = 0;
       } else {
-        counter++;
+        counter += 2;
       }
       playing = 0;
     }
