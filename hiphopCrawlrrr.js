@@ -5,10 +5,10 @@ var pictureTube = require('picture-tube')
 var mq = require('./rabbitconfix');
 var exec = require('child_process').exec;
 var sys = require('sys');
+var http = require('http');
+
 var playing = 0;
-
 var voices = ["Agnes","Albert","Alex","Bad","Bahh","Bells","Boing","Bruce","Bubbles","Cellos","Deranged","Fred","Good","Hysterical","Junior","Kathy","Pipe","Princess","Ralph","Trinoids","Vicki","Victoria","Whisper","Zarvox"];
-
 var voice;
 
 if (typeof process.argv[2] == 'undefined') {
@@ -31,7 +31,7 @@ function rapperRob() {
   var lyricz = lyrics.toString();
   var lyriczwordarray = lyricz.split(" ");
   var lyriczLength = lyriczwordarray.length;
-  //console.log(lyriczwordarray);
+  rhymes(srchTerm);
 
   mq.subscribe('bpm', function(msg) {
     var bpm = msg.bpm, microTick = msg.microTick, tickCounter = msg.tickCounter, beat = msg.beat;
@@ -74,6 +74,36 @@ function getLyrics(err, resp, html) {
     //if (!href.match('.png')) return
   });
   rapperRob();
+}
+
+function rhymes(toRhyme, score, syllables){
+	if(syllables){
+		
+	}
+	
+	options = {
+		host: 'rhymebrain.com',
+		path: '/talk?function=getRhymes&word=' + toRhyme
+	};
+
+	fetchObj = function(response) {
+		var str = '';
+	
+		response.on('data', function(chunk) {
+			str += chunk;
+		});
+	
+		response.on('end', function() {
+			obj = JSON.parse(str);
+			//console.log(obj);
+			hiRhymez = obj.forEach(function(rhyme) {
+  				console.log(rhyme.score);
+			});
+			return obj
+		});
+	}
+
+	http.request(options, fetchObj).end();
 }
 
 function puts(error, stdout, stderr) { sys.puts(stdout) };
