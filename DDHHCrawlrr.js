@@ -14,7 +14,9 @@ var playing = 0;
 var voices = ["Agnes","Albert","Alex","Bad","Bahh","Bells","Boing","Bruce","Bubbles","Cellos","Deranged","Fred","Good","Hysterical","Junior","Kathy","Pipe","Princess","Ralph","Trinoids","Vicki","Victoria","Whisper","Zarvox"];
 var voice;
 
-var speak = "/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/speak -k10 -s 150   --path=/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/ ";
+//var speak = "/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/speak -k10 -s 150   --path=/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/ ";
+//var speak = "/usr/local/bin/speak -k10 -s 150 -ven-us ";
+var speak = "/usr/local/bin/speak -k20 -p 10 -ven-us+m2 ";
 
 var lyricsUrl = [];
 
@@ -31,6 +33,8 @@ if (process.argv[3]) {
   voice=voices[0];
 }
 var rapLyricsURL = 'http://research.blackyouthproject.com/raplyrics/';
+var lyricsLinks = [];
+var lyricsCounter = 0;
 var lyrics = [];
 var rhymingWords = [];
 
@@ -38,12 +42,14 @@ var rhymingWords = [];
 
 function puts(error, stdout, stderr) { sys.puts(stdout); }
 
-function rapperRob() {
+function rapperRobMarkov() {
   var counter = 0;
   var lyricz = lyrics.toString();
+  console.log("LYRICS IN RAPPER ROB: " + lyrics + " and munged: " + lyricz);
 
   m.seed(lyricz, function() {
     //var response = m.respond(lyrics[0]).toString();
+    console.log("RAP YO!" + lyrics);
     var response = m.respond(lyrics[mq.randyNum(lyrics.length -1)]).toString();
     //var lyriczwordarray = lyricz.split(" ");
     //var lyriczLength = lyriczwordarray.length;
@@ -76,11 +82,36 @@ function rapperRob() {
         playing = 0;
       }
     });
+  }); // m.SEED START
+}
+function rapperRob() {
+  var counter = 0;
+  //sanelyrics = lyrics.filter(function(n){ return n != undefined });
+  var len = lyrics.length, i;
+  for(i = 0; i < len; i++ )
+      lyrics[i] && lyrics.push(lyrics[i]);
+  lyrics.splice(0,len);
+
+  console.log("RAP YO! NEW LYRICS: " + lyrics);
+  mq.subscribe('bpm', function(msg) {
+    var bpm = msg.bpm, microTick = msg.microTick, tickCounter = msg.tickCounter, beat = msg.beat;
+    console.log("BPM: " + bpm + " MICROTICK: " + microTick + " TICK COUNTER: " + tickCounter + " and BEAT is: " + beat);
+    if (/[15]/.test(beat) && microTick == 1) {
+      var r1 = mq.randyNum(lyrics.length - 1);
+      var r2 = mq.randyNum(lyrics.length - 1);
+      var r3 = mq.randyNum(lyrics.length - 1);
+      console.log(lyrics[r1]);
+      //exec("say -r " + (bpm * 2) + " -v "+ voice +" " + lyriczwordarray[counter] + " " + lyriczwordarray[counter+1] + " " + lyriczwordarray[counter+2], puts);
+      //exec("say -r " + (bpm * 5) + " -v "+ voice +" " + resSplit[r1] + " " + resSplit[r2], puts);
+      //exec("say -r 100 -v "+ voice +" " + resSplit[r1] + " " + resSplit[r2], puts);
+      //exec("say -v "+ voice +" " + resSplit[r1] + ". " + resSplit[r2] + ", " + resSplit[r3], puts);
+      //exec(speak  +" \"" + lyrics[r1] + ". " + lyrics[r2] + ", " + lyrics[r3] + "\"", puts);
+      exec(speak  +" \"" + lyrics[r1] + "\"", puts);
+      //exec("say -v "+ voice +" " + resSplit[r1], puts);
+      //console.log("YO! " + lyrics[counter]);
+      //if (counter >= lyriczLength) {
+    }
   });
-    //reply = molly.transform(blah)
-  //lyrics.forEach(function(lyric) {
-  //  console.log(lyric);
-  //});
 }
 
 function getSongs(err, resp, html) {
@@ -91,56 +122,27 @@ function getSongs(err, resp, html) {
     lyriclink = $(line).attr("href");
     lurl = rapLyricsURL + lyriclink.replace(/^\.\.\//i, "");
     songLinkz.push(lurl);
-    //console.log("LINK " + lurl);
-    //console.log("i: " + i + " HREF: " + $(line).attr("href"));
-    //var rawline = $(line).text().split("\r\n");
-    //if (rawline[3]) {
-    //  var lyric = rawline[3].replace(/[^a-z\d ]+/ig," ");
-    //  lyric = lyric.replace(/^\s+/,'');
-    //  lyrics.push(lyric);
-    //  //lyricsUrl.push();
-    //  //console.log("LYRIC YO:! " + lyric);
-    //}
   });
-  songLinkz.slice(0,5).forEach (function (url, index) {
-    console.log("SONGLINK:" + url);
+  lyricsLinks = songLinkz.slice(0,5);
+  lyricsLinks.forEach (function (url, index) {
     request(url, getLyrics);
   });
-  //console.log(songLinkz);
-  //rapperRob();
 }
 
 function getLyrics(err, resp, html) {
+  lyricsCounter++;
+  console.log("LYRICCOUNTER = " + lyricsCounter);
   if (err) return console.error(err);
   var $ = cheerio.load(html);
-  //jsdom.env(html,
-  //  ["http://code.jquery.com/jquery.js"],
-  //    function (errors, window) {
-  //      console.log("contents of a.the-link:", window.$("div.lyrics").contents());
-  //    }
-  //);
-  //console.log(html);
-  //$('p[class=song_details]').map(function(i, line) {
-  //$('div[class=lyrics]').map(function(i, line) {
-  //  console.log("I:" + i + " // LINE: " + $(line).text());
-  //  //lyrics.push($(line).text());
-  //});
   $('div[class=lyrics]').first().contents().filter(function(i, line) {
     cleanline = $(line).text().replace(/\r?\n|\r/, '').replace(/.*:.*/, '').replace(/^\[|\(.*/,'').replace(/.*\[.*\].*/,'').replace(/^(LYRICS|CHORUS)/i, '');
-    //console.log("I:" + i + " // LINE: " + cleanline);
-    //console.log("I:" + i + " // LINE: " + $(line).text());
     lyrics.push(cleanline);
   });
-  console.log("LYRICS " + lyrics);
-  //rapperRob();
-  //var lyrr = $('div[class=lyrics]').clone().children().remove().end().text();
-  //var lyrr = $('div[class=lyrics]').clone().children().text();
-  //var lyrr = $('div[class=lyrics]').contents();
-  //console.log("LYRYRYRY " + lyrr);
-
+  if (lyricsCounter == lyricsLinks.length) {
+    console.log("LYRICS DONE! " + lyrics);
+    rapperRob();
+  }
 }
-
-
 
 function getRhymingWords(toRhyme, score, syllables){
   if(syllables){
@@ -167,8 +169,8 @@ function getRhymingWords(toRhyme, score, syllables){
       } else {
         var url = rapLyricsURL;
       }
-
       console.log(url);
+      // MONEY SHOT RIGHT HERE :
       request(url, getSongs);
     });
   };
