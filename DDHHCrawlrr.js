@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-var $ = require('cheerio')
-var request = require('request')
-var pictureTube = require('picture-tube')
+var cheerio = require('cheerio');
+var jsdom = require('jsdom');
+var request = require('request');
+var pictureTube = require('picture-tube');
 var mq = require('./rabbitconfix');
 var exec = require('child_process').exec;
 var sys = require('sys');
@@ -15,6 +16,8 @@ var voice;
 
 var speak = "/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/speak -k10 -s 150   --path=/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/ ";
 
+var lyricsUrl = [];
+
 if (typeof process.argv[2] == 'undefined') {
   console.log("OI! gimme a search term..");
   process.exit(1);
@@ -27,7 +30,7 @@ if (process.argv[3]) {
 } else {
   voice=voices[0];
 }
-var rapLyricsURL = 'http://research.blackyouthproject.com/raplyrics/results/?all/1989-2009/' + srchTerm + '/';
+var rapLyricsURL = 'http://research.blackyouthproject.com/raplyrics/';
 var lyrics = [];
 var rhymingWords = [];
 
@@ -80,20 +83,64 @@ function rapperRob() {
   //});
 }
 
+function getSongs(err, resp, html) {
+  if (err) return console.error(err);
+  var $ = cheerio.load(html);
+  songLinkz = [];
+  $('div[class=song_result] a').map(function(i, line) {
+    lyriclink = $(line).attr("href");
+    lurl = rapLyricsURL + lyriclink.replace(/^\.\.\//i, "");
+    songLinkz.push(lurl);
+    //console.log("LINK " + lurl);
+    //console.log("i: " + i + " HREF: " + $(line).attr("href"));
+    //var rawline = $(line).text().split("\r\n");
+    //if (rawline[3]) {
+    //  var lyric = rawline[3].replace(/[^a-z\d ]+/ig," ");
+    //  lyric = lyric.replace(/^\s+/,'');
+    //  lyrics.push(lyric);
+    //  //lyricsUrl.push();
+    //  //console.log("LYRIC YO:! " + lyric);
+    //}
+  });
+  songLinkz.slice(0,5).forEach (function (url, index) {
+    console.log("SONGLINK:" + url);
+    request(url, getLyrics);
+  });
+  //console.log(songLinkz);
+  //rapperRob();
+}
+
 function getLyrics(err, resp, html) {
   if (err) return console.error(err);
-  var parsedHTML = $.load(html);
-  parsedHTML('div[class=song_result]').map(function(i, line) {
-    var rawline = $(line).text().split("\r\n");
-    if (rawline[3]) {
-      var lyric = rawline[3].replace(/[^a-z\d ]+/ig," ");
-      lyric = lyric.replace(/^\s+/,'');
-      lyrics.push(lyric)
-      //console.log("LYRIC YO:! " + lyric);
-    }
+  var $ = cheerio.load(html);
+  //jsdom.env(html,
+  //  ["http://code.jquery.com/jquery.js"],
+  //    function (errors, window) {
+  //      console.log("contents of a.the-link:", window.$("div.lyrics").contents());
+  //    }
+  //);
+  //console.log(html);
+  //$('p[class=song_details]').map(function(i, line) {
+  //$('div[class=lyrics]').map(function(i, line) {
+  //  console.log("I:" + i + " // LINE: " + $(line).text());
+  //  //lyrics.push($(line).text());
+  //});
+  $('div[class=lyrics]').first().contents().filter(function(i, line) {
+    cleanline = $(line).text().replace(/\r?\n|\r/, '').replace(/.*:.*/, '').replace(/^\[|\(.*/,'').replace(/.*\[.*\].*/,'').replace(/^(LYRICS|CHORUS)/i, '');
+    //console.log("I:" + i + " // LINE: " + cleanline);
+    //console.log("I:" + i + " // LINE: " + $(line).text());
+    lyrics.push(cleanline);
   });
-  rapperRob();
+  console.log("LYRICS " + lyrics);
+  //rapperRob();
+  //var lyrr = $('div[class=lyrics]').clone().children().remove().end().text();
+  //var lyrr = $('div[class=lyrics]').clone().children().text();
+  //var lyrr = $('div[class=lyrics]').contents();
+  //console.log("LYRYRYRY " + lyrr);
+
 }
+
+
 
 function getRhymingWords(toRhyme, score, syllables){
   if(syllables){
@@ -116,13 +163,13 @@ function getRhymingWords(toRhyme, score, syllables){
         }
       });
       if (rhymingWords.length >= 2) {
-        var url = rapLyricsURL + rhymingWords[0] + '/' + rhymingWords[1] + '/';
+        var url = rapLyricsURL + 'results/?all/1989-2009/' + srchTerm + '/'  + rhymingWords[0] + '/' + rhymingWords[1] + '/';
       } else {
         var url = rapLyricsURL;
       }
 
       console.log(url);
-      request(url, getLyrics);
+      request(url, getSongs);
     });
   };
   http.request(options, fetchObj).end();

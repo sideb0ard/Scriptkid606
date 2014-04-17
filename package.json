@@ -12,6 +12,7 @@
     "amqp": "0.1.x",
     "serialport": "*",
     "cheerio": "*",
+    "jsdom": "*",
     "request": "*",
     "picture-tube": "*",
     "markov": "*"
