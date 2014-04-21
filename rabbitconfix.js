@@ -1,8 +1,8 @@
 var amqp = require('amqp');
 
 var config = {
-  //rabbitUrl:'amqp://guest:@172.16.10.74',
-  host:'amqp://guest:@localhost'
+  //rabbitUrl:'amqp://mute:mute@172.16.10.74',
+  rabbitUrl:'amqp://guest@127.0.0.1',
 };
 
 function createConnection(config) {

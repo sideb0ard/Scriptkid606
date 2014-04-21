@@ -16,7 +16,8 @@ var voice;
 
 //var speak = "/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/speak -k10 -s 150   --path=/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/ ";
 //var speak = "/usr/local/bin/speak -k10 -s 150 -ven-us ";
-var speak = "/usr/local/bin/speak -k20 -p 10 -ven-us+m2 ";
+//var speak = "/usr/local/bin/speak -k20 -p 10 -ven-us+m2 ";
+var speak = "speak -ven -g 10 ";
 
 var lyricsUrl = [];
 
@@ -59,7 +60,7 @@ function rapperRobMarkov() {
     mq.subscribe('bpm', function(msg) {
       var bpm = msg.bpm, microTick = msg.microTick, tickCounter = msg.tickCounter, beat = msg.beat;
       console.log("BPM: " + bpm + " MICROTICK: " + microTick + " TICK COUNTER: " + tickCounter + " and BEAT is: " + beat);
-      if (/[15]/.test(beat) && microTick == 1 && playing == 0) {
+      if (/[1357]/.test(beat) && microTick == 1 && playing == 0) {
         var r1 = mq.randyNum(resLength - 1);
         var r2 = mq.randyNum(resLength - 1);
         var r3 = mq.randyNum(resLength - 1);
@@ -69,7 +70,7 @@ function rapperRobMarkov() {
         //exec("say -r " + (bpm * 5) + " -v "+ voice +" " + resSplit[r1] + " " + resSplit[r2], puts);
         //exec("say -r 100 -v "+ voice +" " + resSplit[r1] + " " + resSplit[r2], puts);
         //exec("say -v "+ voice +" " + resSplit[r1] + ". " + resSplit[r2] + ", " + resSplit[r3], puts);
-        exec(speak  +" \"" + resSplit[r1] + ". " + resSplit[r2] + ", " + resSplit[r3] + "\"", puts);
+        exec(speak  +" -s " + tickCounter % 300 + " \"" + resSplit[r1] + resSplit[r2] + "\"", puts);
         //exec("say -v "+ voice +" " + resSplit[r1], puts);
         //console.log("YO! " + lyrics[counter]);
         //if (counter >= lyriczLength) {
@@ -96,17 +97,37 @@ function rapperRob() {
   mq.subscribe('bpm', function(msg) {
     var bpm = msg.bpm, microTick = msg.microTick, tickCounter = msg.tickCounter, beat = msg.beat;
     console.log("BPM: " + bpm + " MICROTICK: " + microTick + " TICK COUNTER: " + tickCounter + " and BEAT is: " + beat);
-    if (/[15]/.test(beat) && microTick == 1) {
-      var r1 = mq.randyNum(lyrics.length - 1);
-      var r2 = mq.randyNum(lyrics.length - 1);
-      var r3 = mq.randyNum(lyrics.length - 1);
-      console.log(lyrics[r1]);
+    if (/[135]/.test(beat) && microTick == 1) {
+
+      //lyrics = _.map(lyrics, function(l) { l.replace(/\W/g, ''); });
+
+      //console.log("LURICS " + lyrics); 
+      var lyricz = lyrics.toString();
+      //console.log("LURICS " + lyricz); 
+      var lyriczwordarray = lyricz.split(" ");
+      console.log(lyriczwordarray);
+      var lyriczLength = lyriczwordarray.length;
+      var r1 = mq.randyNum(lyriczLength - 1);
+      var r2 = mq.randyNum(lyriczLength - 1);
+      var r3 = mq.randyNum(lyriczLength - 1);
+      //console.log(lyriczwordarray[r1]);
+      //
       //exec("say -r " + (bpm * 2) + " -v "+ voice +" " + lyriczwordarray[counter] + " " + lyriczwordarray[counter+1] + " " + lyriczwordarray[counter+2], puts);
       //exec("say -r " + (bpm * 5) + " -v "+ voice +" " + resSplit[r1] + " " + resSplit[r2], puts);
       //exec("say -r 100 -v "+ voice +" " + resSplit[r1] + " " + resSplit[r2], puts);
       //exec("say -v "+ voice +" " + resSplit[r1] + ". " + resSplit[r2] + ", " + resSplit[r3], puts);
       //exec(speak  +" \"" + lyrics[r1] + ". " + lyrics[r2] + ", " + lyrics[r3] + "\"", puts);
-      exec(speak  +" \"" + lyrics[r1] + "\"", puts);
+      //
+      //exec(speak  +" -s " + tickCounter % 300 + " \"" + lyriczwordarray[r1]"\"", puts);
+      //var talkCommand = speak  +" -p " + tickCounter % 99 + " -s " + tickCounter % 300 + " \"" + lyriczwordarray[r1] + " " + lyriczwordarray[r1 + 1] + "\"";
+      var talkCommand = speak + lyriczwordarray[r1] + " " + lyriczwordarray[r1 + 1] + "\"";
+      if (/4/.test(microTick) == 3) {
+        talkCommand = talkCommand + " -p " + ( (tickCounter % 49) + 40);
+      }
+      //exec(speak  +" -p " + tickCounter % 99 + " -s " + tickCounter % 300 + " \"" + lyriczwordarray[r1] + " " + lyriczwordarray[r1 + 1] + "\"", puts);
+      exec(talkCommand);
+      //exec(speak  +" -s " + tickCounter % 300 + " \"" + lyriczwordarray[r1] + " " + lyriczwordarray[r1++] + "\"", puts);
+      
       //exec("say -v "+ voice +" " + resSplit[r1], puts);
       //console.log("YO! " + lyrics[counter]);
       //if (counter >= lyriczLength) {
