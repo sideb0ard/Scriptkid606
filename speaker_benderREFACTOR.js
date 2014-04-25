@@ -46,15 +46,11 @@ function rapperRob() {
   function getSyllablz(wurd,callback){
     exec('./hyphy.rb ' + wurd, function(error, stdout, stdin){ callback(stdout); });
   }
-  function sayWurd(wurd){
-    console.log("SAYWURD " + wurd);
-    wurd = wurd.replace(/^1:/,'');
-    wurdz = wurd.split(/[\s,]+/);
-    console.log("SAYWURD ZZZZ * " + wurdz);
-    console.log(wurdz[mq.randyNum(wurdz.length - 1)]);
-    wurd2say = wurdz[mq.randyNum(wurdz.length - 1)];
-    talkCommand = speak + " -v Daniel \"" + wurd2say + "\"";
+  function sayWurdz(wurdz, voice, r){
+    talkCommand = speak + " -v " + voice + " -r " + r + " \"" + wurdz + "\"";
     if (!/undefined/.test(talkCommand) ) {
+      var wmsg = {"talk": "yes"};
+      mq.publish('talk', wmsg);
       exec(talkCommand);
     }
   }
@@ -75,41 +71,27 @@ function rapperRob() {
 
     if (/[1]/.test(beat) && /[1]/.test(microTick)) {
       oneWurdz = line.split(" ", 3).join(" ");
-      talkCommand = speak + " -r 110 -v Carlos \"" + oneWurdz + "\"";
-      console.log(talkCommand);
-      if (!/undefined/.test(talkCommand) ) {
-        exec(talkCommand);
+      if (!/undefined/.test(oneWurdz) ) {
+        //sayWurdz(oneWurdz, "Bad", 190);
+        sayWurdz(oneWurdz, "Trinoids", 190);
       }
     }
-    //if (/[4]/.test(beat) && /[1]/.test(microTick)) {
-    //  getRhymey(wurds[beat-1], function(rhmz) { 
-    //    rhymrrr = rhmz;
-    //    console.log("IN RHYMEY CALLBACK! : SETTING RHYMRRR TO RHYMZ " + rhymrrr + " - " + rhmz);
-    //  })
-    //}
-
     if (/[3]/.test(beat) && /[1]/.test(microTick)) {
       twoWurdz = line.split(" ", 2).join(" ");
-      talkCommand = speak + " -v Xander \"" + twoWurdz + "\"";
-      console.log(talkCommand);
-      console.log("NUM:" + beat + " // WURD: " + wurds[beat - 1]); 
-      if (!/undefined/.test(talkCommand) ) {
-        exec(talkCommand);
+      if (!/undefined/.test(twoWurdz) ) {
+        //sayWurdz(twoWurdz, "Xander", 200);
       }
     }
 
     if (/[5]/.test(beat) && /[1]/.test(microTick)) {
-      //talkCommand = speak + " -v Karen \"" + wurds[beat] + "\" -r " + ( (tickCounter % 29) + 40);
       ladywurdz = line.split(" ", 5).join(" ");
-      talkCommand = speak + " -r 110 -v Ava \"" + ladywurdz  + "\" -r " + ( (tickCounter % 29) + 40);
-      console.log(talkCommand);
-      if (!/undefined/.test(talkCommand) ) {
-        exec(talkCommand);
+      if (!/undefined/.test(ladywurdz) ) {
+        sayWurdz(ladywurdz, "Zarvox", 170);
       }
     }
     if (/[8]/.test(beat) && /[1]/.test(microTick)) {
       if (!/undefined/.test(wurds[3]) ) {
-        getRhymey(wurds[3], sayWurd);
+        //getRhymey(wurds[3], sayWurd);
       }
     }
     //if (/[8]/.test(beat) && /[1]/.test(microTick) && Math.round(Math.random()*1) && Math.round(Math.random()*1) ) {
