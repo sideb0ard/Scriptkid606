@@ -36,6 +36,8 @@ var rhymingWords = [];
 
 function puts(error, stdout, stderr) { sys.puts(stdout); }
 
+//function hyphy(line
+
 function rapperRob() {
 
   // Initial Values
@@ -43,7 +45,6 @@ function rapperRob() {
   //var line = "Talkin like you're ill, but the shit is all game";
   var wurds = line.split(" ");
   var wurdCounter = 0;
-
 
   console.log("RAP YO! NEW LYRICS: " + lyrics);
   mq.subscribe('bpm', function(msg) {
@@ -107,9 +108,13 @@ function getLyrics(err, resp, html) {
     }
   });
   if (lyricsCounter == lyricsLinks.length) {
-    //console.log(lyrics);
+
     rapperRob();
   }
+}
+
+function sylly() {
+  console.log("SYLLY!");
 }
 
 function getRhymingWords(toRhyme, score, syllables){

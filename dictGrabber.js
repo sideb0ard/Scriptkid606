@@ -119,6 +119,7 @@ function getLyrics(err, resp, html) {
 }
 
 function getRhymingWords(toRhyme, score, syllables){
+  console.log("BOOM!");
   if(syllables){
   }
   options = {

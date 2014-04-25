@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var codetraxx = require('./codetraxx_lib.js');
+var codetraxx = require('./rabbitconfix.js');
 var cp = require('child_process');
 var fs = require('fs');
 

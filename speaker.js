@@ -7,16 +7,10 @@ var mq = require('./rabbitconfix');
 var exec = require('child_process').exec;
 var sys = require('sys');
 var http = require('http');
-var markov = require('markov');
-var m = markov(2);
+var async = require('async');
 
 var playing = 0;
-
-//var speak = "/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/speak -k10 -s 150   --path=/Users/thorsten/Downloads/espeak-1.45.04-OSX/espeak-1.45.04/ ";
-//var speak = "/usr/local/bin/speak -k10 -s 150 -ven-us ";
-//var speak = "/usr/local/bin/speak -k20 -p 10 -ven-us+m2 ";
-//var speak = "speak -ven-pt ";
-var speak = "speak -ven-sbd -g10 ";
+var speak = "say ";
 
 if (typeof process.argv[2] == 'undefined') {
   console.log("OI! gimme a search term..");
@@ -36,14 +30,34 @@ var rhymingWords = [];
 
 function puts(error, stdout, stderr) { sys.puts(stdout); }
 
+//function hyphy(line
+
 function rapperRob() {
 
   // Initial Values
   var line = lyrics[mq.randyNum(lyrics.length - 1)];
   //var line = "Talkin like you're ill, but the shit is all game";
-  var wurds = line.split(" ");
+  var wurds = line.split(" +");
   var wurdCounter = 0;
 
+  function getRhymey(wurd,callback){
+    exec('rhyme ' + wurd + ' | head -2 | tail -1', function(error, stdout, stdin){ callback(stdout); });
+  }
+  function getSyllablz(wurd,callback){
+    exec('./hyphy.rb ' + wurd, function(error, stdout, stdin){ callback(stdout); });
+  }
+  function sayWurd(wurd){
+    console.log("SAYWURD " + wurd);
+    wurd = wurd.replace(/^1:/,'');
+    wurdz = wurd.split(/[\s,]+/);
+    console.log("SAYWURD ZZZZ * " + wurdz);
+    console.log(wurdz[mq.randyNum(wurdz.length - 1)]);
+    wurd2say = wurdz[mq.randyNum(wurdz.length - 1)];
+    talkCommand = speak + " -v Daniel \"" + wurd2say + "\"";
+    if (!/undefined/.test(talkCommand) ) {
+      exec(talkCommand);
+    }
+  }
 
   console.log("RAP YO! NEW LYRICS: " + lyrics);
   mq.subscribe('bpm', function(msg) {
@@ -59,21 +73,48 @@ function rapperRob() {
       wurdCounter = 0;
     }
 
-    if (/[123456]/.test(beat) && /[1]/.test(microTick)) {
-      talkCommand = speak + "\"" + wurds[beat - 1] + "\"";
+    if (/[1]/.test(beat) && /[1]/.test(microTick)) {
+      oneWurdz = line.split(" ", 3).join(" ");
+      talkCommand = speak + " -r 110 -v Carlos \"" + oneWurdz + "\"";
       console.log(talkCommand);
       if (!/undefined/.test(talkCommand) ) {
         exec(talkCommand);
       }
     }
+    //if (/[4]/.test(beat) && /[1]/.test(microTick)) {
+    //  getRhymey(wurds[beat-1], function(rhmz) { 
+    //    rhymrrr = rhmz;
+    //    console.log("IN RHYMEY CALLBACK! : SETTING RHYMRRR TO RHYMZ " + rhymrrr + " - " + rhmz);
+    //  })
+    //}
 
-    if (/[7]/.test(beat) && /[45]/.test(microTick)) {
+    if (/[3]/.test(beat) && /[1]/.test(microTick)) {
+      twoWurdz = line.split(" ", 2).join(" ");
+      talkCommand = speak + " -v Xander \"" + twoWurdz + "\"";
+      console.log(talkCommand);
+      console.log("NUM:" + beat + " // WURD: " + wurds[beat - 1]); 
+      if (!/undefined/.test(talkCommand) ) {
+        exec(talkCommand);
+      }
+    }
 
-      talkCommand = speak + "\"" + wurds[beat] + "\" -p " + ( (tickCounter % 29) + 40);
+    if (/[5]/.test(beat) && /[1]/.test(microTick)) {
+      //talkCommand = speak + " -v Karen \"" + wurds[beat] + "\" -r " + ( (tickCounter % 29) + 40);
+      ladywurdz = line.split(" ", 5).join(" ");
+      talkCommand = speak + " -r 110 -v Ava \"" + ladywurdz  + "\" -r " + ( (tickCounter % 29) + 40);
       console.log(talkCommand);
       if (!/undefined/.test(talkCommand) ) {
         exec(talkCommand);
       }
+    }
+    if (/[8]/.test(beat) && /[1]/.test(microTick)) {
+      if (!/undefined/.test(wurds[3]) ) {
+        getRhymey(wurds[3], sayWurd);
+      }
+    }
+    if (/[8]/.test(beat) && /[1]/.test(microTick) && (tickCounter % 128 == 0)) {
+      talkCommand = speak + " -v Susan \"Teach me how to duggie\"";
+      exec(talkCommand);
     }
   });
 }
@@ -100,54 +141,25 @@ function getLyrics(err, resp, html) {
   var $ = cheerio.load(html);
   $('div[class=lyrics]').first().contents().filter(function(i, line) {
     cleanline = $(line).text();
-    if ( cleanline && !cleanline.match(/^\s+$/g) && !cleanline.match(/(Artist|Album|Song|Title):/i) && !cleanline.match(/(chorus|verse|])/gi) && !cleanline.match(/repeat\s+\d+X/gi) && !cleanline.match(/http/gi)) {
+    if ( cleanline && !cleanline.match(/^\s+$/g) && !cleanline.match(/(Artist|Album|Song|Title):/i) && !cleanline.match(/(chorus|verse|])/gi) && !cleanline.match(/repeat\s+\d+X/gi) && !cleanline.match(/http/gi) && !cleanline.match(/@/)) {
       //cleanline = cleanline.replace(/^\s+/, '').replace(/\s+$/, '').replace(/\W/g, ' ');
-      cleanline = cleanline.replace(/^\s+/, '').replace(/\s+$/, '');
+      cleanline = cleanline.replace(/^\s+/, '').replace(/\s+$/, '').replace(/\(\d+\)/,'');
       lyrics.push(cleanline);
     }
   });
   if (lyricsCounter == lyricsLinks.length) {
-    //console.log(lyrics);
     rapperRob();
   }
 }
 
-function getRhymingWords(toRhyme, score, syllables){
-  if(syllables){
-  }
-  options = {
-    host: 'rhymebrain.com',
-    path: '/talk?function=getRhymes&word=' + toRhyme
-  };
-
-  fetchObj = function(response) {
-    var str = '';
-    response.on('data', function(chunk) {
-      str += chunk;
-    });
-    response.on('end', function() {
-      obj = JSON.parse(str);
-      obj.forEach(function (item, index) {
-        if (item.score > 200) {
-          rhymingWords.push(item.word);
-        }
-      });
-      if (rhymingWords.length >= 2) {
-        var url = rapLyricsURL + 'results/?all/1989-2009/' + srchTerm + '/'  + rhymingWords[0] + '/' + rhymingWords[1] + '/';
-      } else {
-        var url = rapLyricsURL;
-      }
-      console.log(url);
-      // MONEY SHOT RIGHT HERE :
-      request(url, getSongs);
-    });
-  };
-  http.request(options, fetchObj).end();
+function sylly() {
+  console.log("SYLLY!");
 }
 
 
-// Entry point - get rhyming words for srch term, then call rap lyrics dictionary with srch term and top two rhyming words 
+// Entry point 
 // Combine them all into one string array and create a Markov chain from there.
 
-getRhymingWords(srchTerm);
+var url = rapLyricsURL + 'results/?all/1989-2009/' + srchTerm + '/';
+request(url, getSongs);
 //rapperRob();

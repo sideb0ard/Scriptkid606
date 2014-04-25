@@ -15,6 +15,6 @@
     "jsdom": "*",
     "request": "*",
     "picture-tube": "*",
-    "markov": "*"
+    "async": "*"
   }
 }
