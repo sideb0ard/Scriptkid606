@@ -53,7 +53,7 @@ function rapperRob() {
     console.log("SAYWURD ZZZZ * " + wurdz);
     console.log(wurdz[mq.randyNum(wurdz.length - 1)]);
     wurd2say = wurdz[mq.randyNum(wurdz.length - 1)];
-    talkCommand = speak + " -v Daniel \"" + wurd2say + "\"";
+    talkCommand = speak + " -v Xander \"" + wurd2say + "\"";
     if (!/undefined/.test(talkCommand) ) {
       exec(talkCommand);
     }
@@ -75,7 +75,7 @@ function rapperRob() {
 
     if (/[1]/.test(beat) && /[1]/.test(microTick)) {
       oneWurdz = line.split(" ", 3).join(" ");
-      talkCommand = speak + " -r 110 -v Carlos \"" + oneWurdz + "\"";
+      talkCommand = speak + " -r 110 -v Oliver \"" + oneWurdz + "\"";
       console.log(talkCommand);
       if (!/undefined/.test(talkCommand) ) {
         exec(talkCommand);
@@ -90,7 +90,7 @@ function rapperRob() {
 
     if (/[3]/.test(beat) && /[1]/.test(microTick)) {
       twoWurdz = line.split(" ", 2).join(" ");
-      talkCommand = speak + " -v Xander \"" + twoWurdz + "\"";
+      talkCommand = speak + " -v Serena \"" + twoWurdz + "\"";
       console.log(talkCommand);
       console.log("NUM:" + beat + " // WURD: " + wurds[beat - 1]); 
       if (!/undefined/.test(talkCommand) ) {
@@ -112,8 +112,8 @@ function rapperRob() {
         getRhymey(wurds[3], sayWurd);
       }
     }
-    if (/[8]/.test(beat) && /[1]/.test(microTick) && Math.round(Math.random()*1) && Math.round(Math.random()*1) ) {
-      talkCommand = speak + " -r 170 -v Karen \"Teach me how to duggie. how to duggie\"";
+    if (/[8]/.test(beat) && /[1]/.test(microTick) && (tickCounter % 128 == 0)) {
+      talkCommand = speak + " -v Susan \"Teach me how to duggie\"";
       exec(talkCommand);
     }
   });

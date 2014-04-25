@@ -53,7 +53,7 @@ function rapperRob() {
     console.log("SAYWURD ZZZZ * " + wurdz);
     console.log(wurdz[mq.randyNum(wurdz.length - 1)]);
     wurd2say = wurdz[mq.randyNum(wurdz.length - 1)];
-    talkCommand = speak + " -v Daniel \"" + wurd2say + "\"";
+    talkCommand = speak + " -v Jorge \"" + wurd2say + "\"";
     if (!/undefined/.test(talkCommand) ) {
       exec(talkCommand);
     }
@@ -75,7 +75,7 @@ function rapperRob() {
 
     if (/[1]/.test(beat) && /[1]/.test(microTick)) {
       oneWurdz = line.split(" ", 3).join(" ");
-      talkCommand = speak + " -r 110 -v Carlos \"" + oneWurdz + "\"";
+      talkCommand = speak + " -r 110 -v Samantha \"" + oneWurdz + ", YO YO.\"";
       console.log(talkCommand);
       if (!/undefined/.test(talkCommand) ) {
         exec(talkCommand);
@@ -90,32 +90,32 @@ function rapperRob() {
 
     if (/[3]/.test(beat) && /[1]/.test(microTick)) {
       twoWurdz = line.split(" ", 2).join(" ");
-      talkCommand = speak + " -v Xander \"" + twoWurdz + "\"";
+      talkCommand = speak + " -v Serena \"" + twoWurdz + " BITCH\"";
       console.log(talkCommand);
       console.log("NUM:" + beat + " // WURD: " + wurds[beat - 1]); 
       if (!/undefined/.test(talkCommand) ) {
-        exec(talkCommand);
+        //exec(talkCommand);
       }
     }
 
     if (/[5]/.test(beat) && /[1]/.test(microTick)) {
       //talkCommand = speak + " -v Karen \"" + wurds[beat] + "\" -r " + ( (tickCounter % 29) + 40);
       ladywurdz = line.split(" ", 5).join(" ");
-      talkCommand = speak + " -r 110 -v Ava \"" + ladywurdz  + "\" -r " + ( (tickCounter % 29) + 40);
+      talkCommand = speak + " -v Princess \"" + ladywurdz  + "\" -r " + ( (tickCounter % 29) + 40);
       console.log(talkCommand);
       if (!/undefined/.test(talkCommand) ) {
         exec(talkCommand);
       }
     }
-    if (/[8]/.test(beat) && /[1]/.test(microTick)) {
-      if (!/undefined/.test(wurds[3]) ) {
-        getRhymey(wurds[3], sayWurd);
-      }
-    }
-    if (/[8]/.test(beat) && /[1]/.test(microTick) && Math.round(Math.random()*1) && Math.round(Math.random()*1) ) {
-      talkCommand = speak + " -r 170 -v Karen \"Teach me how to duggie. how to duggie\"";
-      exec(talkCommand);
-    }
+    //if (/[8]/.test(beat) && /[1]/.test(microTick)) {
+    //  if (!/undefined/.test(wurds[3]) ) {
+    //    getRhymey(wurds[3], sayWurd);
+    //  }
+    //}
+    //if (/[8]/.test(beat) && /[1]/.test(microTick) && (tickCounter % 32 == 0)) {
+      //talkCommand = speak + " -v Juan \"Teach me how to duggie\"";
+      //exec(talkCommand);
+    //}
   });
 }
 
